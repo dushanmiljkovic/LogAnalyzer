@@ -4,7 +4,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO; 
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LogAnalyzer
@@ -24,8 +25,8 @@ namespace LogAnalyzer
 
         public async Task Run()
         {
-            var path = Directory.GetCurrentDirectory() + "\\log.txt";
-             
+            var path = Directory.GetCurrentDirectory() + "\\log2.txt";
+
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             Console.WriteLine("*** Process File - Start***");
@@ -37,22 +38,16 @@ namespace LogAnalyzer
             Console.WriteLine("Time taken: " + stopWatch.Elapsed.ToString(@"m\:ss\.fff"));
             Console.WriteLine("*****");
 
-            var reportList = await DictionaryToList(data);
+            var reportList = await MapLogReport(data);
 
             _visualizeReport.Visualize(reportList);
         }
 
-        private async Task<List<LogReportModel>> DictionaryToList(ConcurrentDictionary<string, int> hitMap)
+        private async Task<List<LogReportModel>> MapLogReport(ConcurrentDictionary<string, int> ipHitMap)
         {
-            // This should be in Parallel due to speed
-            var mappedList = new List<LogReportModel>();
-            foreach (var (ipAddress, count) in hitMap)
-            {
-                var hostname = await _dnsResolver.GetHostNameAsync(ipAddress);
-                var testPrintModel = new LogReportModel() { HitCount = count, HostName = hostname, HostAddress = ipAddress };
-                mappedList.Add(testPrintModel);
-            }
-            return mappedList;
+            var hostNameTask = ipHitMap.Select(host => (host, _dnsResolver.GetHostNameAsync(host.Key))).ToList();
+            await Task.WhenAll(hostNameTask.Select(res => res.Item2).ToArray()); 
+            return hostNameTask.Select(res => new LogReportModel() { HitCount = res.host.Value, HostAddress = res.host.Key, HostName = res.Item2.Result }).ToList();
         }
     }
 }
