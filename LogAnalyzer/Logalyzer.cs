@@ -4,8 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Text;
+using System.IO; 
 using System.Threading.Tasks;
 
 namespace LogAnalyzer
@@ -31,7 +30,7 @@ namespace LogAnalyzer
             stopWatch.Start();
             Console.WriteLine("*** Process File - Start***");
 
-            var data = await _fileProcessService.Do(path);
+            var data = await _fileProcessService.Read(path);
 
             stopWatch.Stop();
             Console.WriteLine("*** Process File - End ***");
@@ -45,6 +44,7 @@ namespace LogAnalyzer
 
         private async Task<List<LogReportModel>> DictionaryToList(ConcurrentDictionary<string, int> hitMap)
         {
+            // This should be in Parallel due to speed
             var mappedList = new List<LogReportModel>();
             foreach (var (ipAddress, count) in hitMap)
             {

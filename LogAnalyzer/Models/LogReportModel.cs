@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LogAnalyzer.Models
+﻿namespace LogAnalyzer.Models
 {
     public class LogReportModel
     {

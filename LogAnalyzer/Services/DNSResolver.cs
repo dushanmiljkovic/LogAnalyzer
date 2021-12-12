@@ -1,14 +1,12 @@
 ﻿using LogAnalyzer.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LogAnalyzer.Services
 {
     public class DNSResolver : IDNSResolver
     {
+        private const string notResolved = "Unknown Host";
         public async Task<string> GetHostNameAsync(string ipAddress)
         {
             try
@@ -18,7 +16,7 @@ namespace LogAnalyzer.Services
             catch
             {
                 // TODO : Make it a setting 
-                return "-";
+                return notResolved;
             }
         }
     }

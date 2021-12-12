@@ -1,8 +1,5 @@
-﻿using LogAnalyzer.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks; 
+﻿using LogAnalyzer.Models; 
+using System.Collections.Generic; 
 
 namespace LogAnalyzer.Interfaces
 {
